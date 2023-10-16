@@ -42,10 +42,28 @@ app.get("/current-price", async (req, res) => {
 
 app.get("/crypto-price-data", async (req, res) => {
   // cryptocurrency sent in the query of the request instead of the body - because of errors occurred and because there is no security concerns
-  const cryptoPriceRequest = await axios.get("https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_WEEKLY&symbol=" + req.query.cryptocurrency + "&market=USD&apikey=" +process.env.ALPHA_VANTAGE_API_KEY);
+  const cryptoPriceRequest = await axios.get("https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_WEEKLY&symbol=" + req.query.cryptocurrency + "&market=USD&apikey=" + process.env.ALPHA_VANTAGE_API_KEY);
 
   getPriceHistory(cryptoPriceRequest.data["Time Series (Digital Currency Weekly)"]);
   res.send(cryptoPriceRequest.data);
+});
+
+async function handlingChartData(priceData){
+  const priceAction = priceData["Time Series (Digital Currency Daily)"];
+  const priceActionIterable = Object.entries(priceAction);
+  let label = [];
+  let price = [];
+  for (let i = 0; i < 14; i++){
+    label.push(priceActionIterable[i][0]);
+    price.push(priceActionIterable[i][1]["4a. close (USD)"]);
+  }
+
+  return [label, price];
+}
+
+app.get("/price-history", async (req, res) => {
+  const cryptoPriceRequest = await axios.get("https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=" + req.query.cryptocurrency + "&market=USD&apikey=" + process.env.ALPHA_VANTAGE_API_KEY);
+  res.send( await handlingChartData(cryptoPriceRequest.data));
 });
 
 app.listen(PORT, function(){

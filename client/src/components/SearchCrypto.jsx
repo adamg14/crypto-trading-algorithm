@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import axios from "axios";
-import { Line } from "react-chartjs-2";
 import PriceData from "./PriceData";
+import CryptoPriceChart from "./CryptoPriceChart";
 
 function SearchCrypto(){
     const [userInput, setUserInput] = useState();
@@ -13,6 +13,8 @@ function SearchCrypto(){
     const [previousClosePrice, setPreviousClosePrice] = useState();
     const [previousPriceDate, setPreviousPriceDate] = useState();
     const [pricePercentChange, setPricePercentChange] = useState();
+    const [labels, setLabels] = useState();
+    const [priceHistory, setPriceHistory] = useState();
 
     // the event passed into the handleChange function is the event is a change in the text input field
     function handleChange(event){
@@ -20,6 +22,7 @@ function SearchCrypto(){
         setUserInput(event.target.value);
         console.log("this should be the user input " + userInput);
         document.getElementById("priceData").setAttribute("hidden", true);
+        document.getElementById("priceChart").setAttribute("hidden", true);
     }
 
     async function handleButtonClick(){
@@ -35,7 +38,13 @@ function SearchCrypto(){
         setPreviousPriceDate(cryptoPriceData["Previous Price Date"]);
         setPricePercentChange(cryptoPriceData["Price Percent Change"]);
 
+        const cryptoPriceChart = (await axios.get("http://localhost:4000/price-history", {params: getRequestParameters})).data;
+        
+        setLabels(cryptoPriceChart[0]);
+        setPriceHistory(cryptoPriceChart[1]);
+
         document.getElementById("priceData").removeAttribute("hidden");
+        document.getElementById("priceChart").removeAttribute("hidden");
     }
 
     return (
@@ -49,6 +58,9 @@ function SearchCrypto(){
                 <hr />
                 <PriceData crypto={ userInput } currentPrice={ currentClosePrice } currentDate={ currentPriceDate } previousPrice = { previousClosePrice } previousDate={ previousPriceDate } percentChange={ pricePercentChange }></PriceData>
                 <hr />
+            </div>
+            <div id="priceChart" hidden>
+                <CryptoPriceChart chartLabels={ labels } chartPriceData={ priceHistory }></CryptoPriceChart>
             </div>
         </div>
     )
