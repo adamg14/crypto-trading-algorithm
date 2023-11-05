@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import axios from "axios";
 import PriceData from "./PriceData";
 import CryptoPriceChart from "./CryptoPriceChart";
+import RSI from "./RSI";
 
 function SearchCrypto(){
     const [userInput, setUserInput] = useState();
@@ -15,6 +16,7 @@ function SearchCrypto(){
     const [pricePercentChange, setPricePercentChange] = useState();
     const [labels, setLabels] = useState();
     const [priceHistory, setPriceHistory] = useState();
+    const [RSIValue, setRSIValue] = useState();
 
     // the event passed into the handleChange function is the event is a change in the text input field
     function handleChange(event){
@@ -45,6 +47,10 @@ function SearchCrypto(){
 
         document.getElementById("priceData").removeAttribute("hidden");
         document.getElementById("priceChart").removeAttribute("hidden");
+
+        const RSIRequest = (await axios.get("http://localhost:4000/calculate-rsi", {params: getRequestParameters})).data;
+        setRSIValue(RSIRequest["Relative Strength Index"]);
+        document.getElementById("RSI").removeAttribute("hidden");
     }
 
     return (
@@ -58,6 +64,9 @@ function SearchCrypto(){
                 <hr />
                 <PriceData crypto={ userInput } currentPrice={ currentClosePrice } currentDate={ currentPriceDate } previousPrice = { previousClosePrice } previousDate={ previousPriceDate } percentChange={ pricePercentChange }></PriceData>
                 <hr />
+            </div>
+            <div id="RSI" hidden>
+                <RSI RSIValue={ RSIValue }></RSI>
             </div>
             <div id="priceChart" hidden>
                 <CryptoPriceChart chartLabels={ labels } chartPriceData={ priceHistory }></CryptoPriceChart>
