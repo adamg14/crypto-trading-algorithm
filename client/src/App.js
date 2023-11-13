@@ -9,7 +9,6 @@ function App() {
     <div className="App">
       <Heading></Heading>
       <SearchCrypto></SearchCrypto>
-      <CryptoPriceChart></CryptoPriceChart>
     </div>
   );
 }
