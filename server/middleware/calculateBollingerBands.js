@@ -10,9 +10,12 @@ async function calculateBollingerBands(req, res){
   let simpleMovingAverage = [];
   let upperBand = [];
   let lowerBand = [];
-
+  let fullDateGraphLabel = [];
+  let fullPriceData = [];
   for (let i = 0; i < 100 ;i++){
     priceData.push(cryptoPriceResult.data[i]["price_close"]);
+    fullPriceData.push(cryptoPriceResult.data[i]["price_close"]);
+    fullDateGraphLabel.push(cryptoPriceResult.data[i]["time_period_start"].slice(0, 10));
     if (priceData.length == 5){
       const movingAverage = calculateSimpleMovingAverage(priceData);
       simpleMovingAverage.push(movingAverage);
@@ -32,7 +35,7 @@ async function calculateBollingerBands(req, res){
       console.log(standardDeviation);
       priceData = [];
     }else if(priceData.length == 1){
-      dateGraphLabel.push(cryptoPriceResult.data[i]["time_period_start"]);
+      dateGraphLabel.push(cryptoPriceResult.data[i]["time_period_start"].slice(0, 10));
     }
   }
 
@@ -40,7 +43,9 @@ async function calculateBollingerBands(req, res){
     "Graph Date Label": dateGraphLabel,
     "Simple Moving Average": simpleMovingAverage,
     "Upper Bollinger Band": upperBand,
-    "Lower Bollinger Band": lowerBand
+    "Lower Bollinger Band": lowerBand,
+    "Full Graph Label": fullDateGraphLabel,
+    "Full Price Data": fullPriceData
   });
 }
 

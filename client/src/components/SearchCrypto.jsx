@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import BollingerBands from "./BollingerBands";
+import PriceAction from "./PriceAction";
 import Axios from "axios";
 
 function SearchCrypto(){
@@ -8,9 +9,13 @@ function SearchCrypto(){
     const [lowerBand, setLowerBand] = useState();
     const [upperBand, setUpperBand] = useState();
     const [simpleMovingAverage, setSimpleMovingAverage] = useState();
+    const [fullGraphLabel, setFullGraphLabel] = useState();
+    const [fullPriceAction, setFullPriceAction] = useState();
+
     // the event passed into the handleChange function is the event is a change in the text input field
     function handleChange(event){
-        document.getElementById("bollinger-bands").setAttribute("hidden", true)
+        document.getElementById("bollinger-bands").setAttribute("hidden", true);
+        document.getElementById("price-action").setAttribute("hidden", true);
         console.log("someone is typing an input in the text box");
         setUserInput(event.target.value);
     }
@@ -34,8 +39,11 @@ function SearchCrypto(){
         setLowerBand(graphData.data["Lower Bollinger Band"]);
         setUpperBand(graphData.data["Upper Bollinger Band"]);
         setSimpleMovingAverage(graphData.data["Simple Moving Average"]);
+        setFullGraphLabel(graphData.data["Full Graph Label"]);
+        setFullPriceAction(graphData.data["Full Price Data"]);
         // remove the hidden attribute from the bollinger band
         document.getElementById("bollinger-bands").removeAttribute("hidden");
+        document.getElementById("price-action").removeAttribute("hidden");
         // the graph data should be shown 
         }else{
             console.log("Invalid API request. API has not returned data");
@@ -46,7 +54,17 @@ function SearchCrypto(){
         <div>
             <input type="text" onChange={handleChange} value={userInput}></input>
             <button onClick={ handleButtonClick }>Search Cryptocurrency</button>
-            
+
+            {/* <div hidden id="price-action">
+                <h1>$ { userInput } Price Action</h1>
+                <p>The close price action for this commodity for the past 100 days.</p>
+                <PriceAction fullGraphLabel={ fullGraphLabel } fullPriceAction={ fullPriceAction }></PriceAction>
+            </div> */}
+            <div hidden id="price-action">
+                <h1>$ { userInput} Price Action</h1>
+                <p>The close price action for this commodity for the past 100 days.</p>
+                <PriceAction fullGraphLabel={ fullGraphLabel } fullPriceAction= { fullPriceAction }></PriceAction>
+            </div>
             <div hidden id="bollinger-bands">
                 <h1>Bollinger Bands</h1>
                 <p>Middle Band: Simple Moving Average</p>
