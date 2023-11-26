@@ -36,9 +36,12 @@ async function calculateBollingerBands(req, res){
     }
   }
 
-  console.log(lowerBand);
-  console.log(upperBand);
-  res.send("hello world");
+  res.send({
+    "Graph Date Label": dateGraphLabel,
+    "Simple Moving Average": simpleMovingAverage,
+    "Upper Bollinger Band": upperBand,
+    "Lower Bollinger Band": lowerBand
+  });
 }
 
 module.exports = calculateBollingerBands;
